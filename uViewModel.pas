@@ -97,7 +97,7 @@ var
 begin
   SL := TStringList.Create;
   try
-    SL.LoadFromFile(AFileName, TEncoding.UTF8);
+    SL.LoadFromFile(AFileName);
     for i := 0 to SL.Count - 1 do
     begin
       if Length(SL[i]) < 5 then // ha üres, akkor kihagyjuk
