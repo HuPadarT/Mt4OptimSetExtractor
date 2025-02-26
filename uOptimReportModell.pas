@@ -57,7 +57,7 @@ begin
   Bg := POS(TitleBegin, AText) + Length(TitleBegin);
   Ed := POS(TitleEnd, AText);
   FSettings := AText.Substring(Bg, Ed-Bg);
-  Temptxt := AText.Substring(Ed).Replace(DataSep, ';').Replace('</td><td>', ';').Replace('</td></tr>', ';').Replace('>', '');
+  Temptxt := AText.Substring(Ed).Replace(DataSep, ';', [rfReplaceAll]).Replace('</td><td>', ';', [rfReplaceAll]).Replace('</td></tr>', ';', [rfReplaceAll]).Replace('>', '', [rfReplaceAll]);
   Sl := TStringList.Create();
   try
     Sl.StrictDelimiter := true;

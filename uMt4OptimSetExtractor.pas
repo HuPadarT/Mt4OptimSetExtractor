@@ -48,23 +48,32 @@ begin
 end;
 
 procedure TfrmMt4OptimSetExtractor.btnSaveSetClick(Sender: TObject);
+var
+  I: integer;
 begin
   SaveDialog1.Filter := 'SET (*.set)|*.set';
   if SaveDialog1.Execute then
   begin
-    // itt majd még kitalálom
+    I := DBGrid1.DataSource.DataSet.FieldByName('RowNumber').AsInteger;
+    FViewModel.SaveSetToFile(ChangeFileExt(SaveDialog1.FileName, ''), I);
   end;
 end;
 
 procedure TfrmMt4OptimSetExtractor.DBGrid1TitleClick(Column: TColumn);
+var
+  FieldName: string;
+  IndexName: string;
+  Descending: Boolean;
 begin
   if Column.Field <> nil then
   begin
-    { TODO
-    if FViewModel.ClientDataSet.IndexFieldNames = Column.Field.FieldName then
-      FViewModel.ClientDataSet.IndexFieldNames := Column.Field.FieldName + ' DESC'
-    else}
-      FViewModel.ClientDataSet.IndexFieldNames := Column.Field.FieldName;
+    FieldName := Column.Field.FieldName;
+    Descending := FViewModel.ClientDataSet.IndexName = 'Descending_' + FieldName;
+    if Descending then
+      IndexName := 'Ascending_' + FieldName
+    else
+      IndexName := 'Descending_' + FieldName;
+    FViewModel.ClientDataSet.IndexName := IndexName;
   end;
 end;
 
