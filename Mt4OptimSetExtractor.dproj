@@ -124,7 +124,6 @@
         </DelphiCompile>
         <DCCReference Include="uMt4OptimSetExtractor.pas">
             <Form>frmMt4OptimSetExtractor</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="uOptimReportModell.pas"/>
         <DCCReference Include="uViewModel.pas"/>
