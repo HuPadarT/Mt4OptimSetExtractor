@@ -2,8 +2,8 @@ object frmMt4OptimSetExtractor: TfrmMt4OptimSetExtractor
   Left = 0
   Top = 0
   Caption = 'Mt4 optimization report Set Extractor'
-  ClientHeight = 699
-  ClientWidth = 835
+  ClientHeight = 602
+  ClientWidth = 636
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -12,16 +12,16 @@ object frmMt4OptimSetExtractor: TfrmMt4OptimSetExtractor
   Font.Style = []
   OnCreate = FormCreate
   OnDestroy = FormDestroy
-  DesignSize = (
-    835
-    699)
+  OnResize = FormResize
   TextHeight = 15
   object DBGrid1: TDBGrid
     Left = 0
     Top = 0
-    Width = 835
-    Height = 649
+    Width = 636
+    Height = 529
     Align = alTop
+    Anchors = [akLeft, akTop, akRight, akBottom]
+    Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
     TabOrder = 0
     TitleFont.Charset = DEFAULT_CHARSET
     TitleFont.Color = clWindowText
@@ -30,24 +30,50 @@ object frmMt4OptimSetExtractor: TfrmMt4OptimSetExtractor
     TitleFont.Style = []
     OnTitleClick = DBGrid1TitleClick
   end
-  object btnImport: TButton
+  object StatusBar1: TStatusBar
     Left = 0
-    Top = 666
-    Width = 159
-    Height = 25
-    Caption = 'Import Mt4 optim report'
-    TabOrder = 1
-    OnClick = btnImportClick
+    Top = 575
+    Width = 636
+    Height = 27
+    Panels = <
+      item
+        Width = 200
+      end
+      item
+        Alignment = taRightJustify
+        Width = 50
+      end>
   end
-  object btnSaveSet: TButton
-    Left = 674
-    Top = 666
-    Width = 159
-    Height = 25
-    Anchors = [akRight, akBottom]
-    Caption = 'Save selected to Set file'
+  object Panel1: TPanel
+    Left = 0
+    Top = 529
+    Width = 636
+    Height = 40
+    Align = alTop
     TabOrder = 2
-    OnClick = btnSaveSetClick
+    ExplicitTop = 513
+    DesignSize = (
+      636
+      40)
+    object btnImport: TButton
+      Left = 8
+      Top = 6
+      Width = 159
+      Height = 25
+      Caption = 'Import Mt4 optim report'
+      TabOrder = 0
+      OnClick = btnImportClick
+    end
+    object btnSaveSet: TButton
+      Left = 469
+      Top = 6
+      Width = 159
+      Height = 25
+      Anchors = [akTop, akRight]
+      Caption = 'Save selected to Set file'
+      TabOrder = 1
+      OnClick = btnSaveSetClick
+    end
   end
   object OpenDialog1: TOpenDialog
     Left = 288

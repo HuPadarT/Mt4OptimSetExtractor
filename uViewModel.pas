@@ -44,7 +44,7 @@ begin
     Add('ExpectedResult', ftFloat);
     Add('DdInMoney', ftFloat);
     Add('DdInPercent', ftFloat);
-    Add('Settings', ftString, 100);
+    Add('Settings', ftString, 400);
   end;
   FClientDataSet.CreateDataSet;
   BuildIndices;
@@ -138,6 +138,7 @@ begin
     end;
   finally
     FClientDataSet.EnableControls;
+    FClientDataSet.First;
   end;
 end;
 

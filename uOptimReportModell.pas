@@ -46,7 +46,7 @@ var
   Bg, Ed: integer;
   Sl: TStringList;
 begin
-  Bg := POS(TitleBegin, AText) + Length(TitleBegin);
+  Bg := POS(TitleBegin, AText) + Length(TitleBegin) - 1;
   Ed := POS(TitleEnd, AText);
   FSettings := AText.Substring(Bg, Ed-Bg);
   Temptxt := AText.Substring(Ed).Replace(DataSep, ';', [rfReplaceAll]).Replace('</td><td>', ';', [rfReplaceAll]).Replace('</td></tr>', ';', [rfReplaceAll]).Replace('>', '', [rfReplaceAll]);
