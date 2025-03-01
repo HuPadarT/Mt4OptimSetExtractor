@@ -19,11 +19,11 @@ type
   public
     constructor Create;
     destructor Destroy; override;
+    procedure LoadFromFile(const AFileName: string);
+    procedure SaveSetToFile(const AFileName: string; const RwNo: integer);
 
     property ClientDataSet: TClientDataSet read FClientDataSet;
     property StatusMessage: string read FProgressStatus;
-    procedure LoadFromFile(const AFileName: string);
-    procedure SaveSetToFile(const AFileName: string; const RwNo: integer);
   end;
 
 implementation
@@ -95,19 +95,45 @@ var
   SL: TStringList;
   i: Integer;
 begin
+  if FReportList.Count > 0 then
+  begin // ha már volt benne adat, akkor törölni kell
+    FReportList.Clear;
+    FClientDataSet.EmptyDataSet;
+  end;
+  FProgressStatus := '';
   SL := TStringList.Create;
   try
     SL.LoadFromFile(AFileName);
-    for i := 0 to SL.Count - 1 do
+    if not Sl.Text.Contains('Optimization Report') and (AFileName.Contains('htm')) then
     begin
-      if Length(SL[i]) < 5 then // ha üres, akkor kihagyjuk
-        Continue;
-
-      if Pos(TitleBegin, SL[i]) > 0 then // ha van benne beállítás
+      FProgressStatus := 'This is not optimization report!';
+      Exit;
+    end;
+    if POS('DOCTYPE HTML', SL[0]) < 1 then // ha nem HTM fájl
+    begin
+      for i := 0 to SL.Count - 1 do
       begin
+        if Length(SL[i]) < 5 then // ha üres, akkor kihagyjuk
+          Continue;
+
         Item := TOptimReport.Create;
-        Item.StringToOptimReport(SL[i]);
+        Item.CsvToOptimReport(SL[i]);
         FReportList.Add(Item);
+      end;
+    end
+    else // itt HTM reportól van szó
+    begin
+      for i := 0 to SL.Count - 1 do
+      begin
+        if Length(SL[i]) < 5 then // ha üres, akkor kihagyjuk
+          Continue;
+
+        if Pos(TitleBegin, SL[i]) > 0 then // ha van benne beállítás - table row
+        begin
+          Item := TOptimReport.Create;
+          Item.TableRowToOptimReport(SL[i]);
+          FReportList.Add(Item);
+        end;
       end;
     end;
   finally
@@ -152,7 +178,7 @@ begin
     try
       Sl.StrictDelimiter := true;
       Sl.Delimiter := ';';
-      Sl.DelimitedText := GetSettingByRowNumber(RwNo);
+      Sl.DelimitedText := sLineBreak + GetSettingByRowNumber(RwNo); // kell az elejére egy üres sor, hogy az mt4 a legelsõ változó értékét is be tudja tölteni
       Sl.SaveToFile(AFileName + '_Rwno_' + RwNo.ToString + '.set', TEncoding.UTF8);
     finally
       Sl.Free;

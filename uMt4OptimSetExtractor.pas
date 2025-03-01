@@ -8,7 +8,8 @@ uses
   Data.DB, Vcl.StdCtrls, Vcl.Grids, Vcl.DBGrids, Datasnap.DBClient,
   Vcl.ExtCtrls, Vcl.ComCtrls;
 
-const defCaption = 'Mt4 optimization report Set Extractor';
+const
+  defCaption = 'Mt4 optimization report Set Extractor v%s by Enderpt';
 
 type
   TfrmMt4OptimSetExtractor = class(TForm)
@@ -29,9 +30,11 @@ type
   private
     { Private declarations }
     FFileName: string;
+    FCurrentVersion: string;
     FViewModel: TViewModel;
     procedure SelectReport;
     procedure StatusBarPanelsResize();
+    function GetExeVersion: string;
 
   public
     { Public declarations }
@@ -50,11 +53,19 @@ procedure TfrmMt4OptimSetExtractor.btnImportClick(Sender: TObject);
 begin
   SelectReport;
   FViewModel.LoadFromFile(FFileName);
-  self.Caption := defCaption + ' - ' + ExtractFileName(FFileName);
-  StatusBar1.Panels[0].Text := FFileName;
-  StatusBar1.Panels[1].Text := ExtractFileName(FFileName) + '    ';
-  DataSource1.DataSet := FViewModel.ClientDataSet;
-  DBGrid1.DataSource := DataSource1;
+  if FViewModel.StatusMessage = ''  then
+  begin
+    self.Caption := Format(defCaption, [FCurrentVersion])  + ' - ' + ExtractFileName(FFileName);
+    StatusBar1.Panels[1].Text := FFileName;
+    StatusBar1.Panels[2].Text := ExtractFileName(FFileName) + '    ';
+    DataSource1.DataSet := FViewModel.ClientDataSet;
+    DBGrid1.DataSource := DataSource1;
+    StatusBar1.Panels[0].Text := Format('Set count: %d', [FViewModel.ClientDataSet.RecordCount]);
+  end
+  else
+  begin
+    ShowMessage(FViewModel.StatusMessage);
+  end;
 end;
 
 procedure TfrmMt4OptimSetExtractor.btnSaveSetClick(Sender: TObject);
@@ -62,7 +73,7 @@ var
   I: integer;
 begin
   SaveDialog1.Filter := 'SET (*.set)|*.set';
-  SaveDialog1.FileName := FFileName;
+  SaveDialog1.FileName := ChangeFileExt(ExtractFileName(FFileName), '');
   SaveDialog1.DefaultExt := 'set';
   if SaveDialog1.Execute then
   begin
@@ -92,6 +103,8 @@ end;
 procedure TfrmMt4OptimSetExtractor.FormCreate(Sender: TObject);
 begin
   FViewModel := TViewModel.Create();
+  FCurrentVersion := GetExeVersion;
+  Self.Caption := Format(defCaption, [FCurrentVersion]);
   StatusBarPanelsResize;
 end;
 
@@ -106,9 +119,37 @@ begin
   StatusBarPanelsResize
 end;
 
+function TfrmMt4OptimSetExtractor.GetExeVersion: string;
+var
+  Exe, exeVersion: string;
+  Size, Handle: DWORD;
+  Buffer: TBytes;
+  FixedPtr: PVSFixedFileInfo;
+begin
+  try
+    Exe := Application.ExeName;
+    Size := GetFileVersionInfoSize(PChar(Exe), Handle);
+    if Size = 0 then
+      RaiseLastOSError;
+    SetLength(Buffer, Size);
+    if not GetFileVersionInfo(PChar(Exe), Handle, Size, Buffer) then
+      RaiseLastOSError;
+    if not VerQueryValue(Buffer, '\', Pointer(FixedPtr), Size) then
+      RaiseLastOSError;
+    exeVersion := Format('%d.%d.%d.%d',
+                                [LongRec(FixedPtr.dwFileVersionMS).Hi,  //major
+                                LongRec(FixedPtr.dwFileVersionMS).Lo,  //minor
+                                (LongRec(FixedPtr.dwFileVersionLS).Hi),  //release
+                                LongRec(FixedPtr.dwFileVersionLS).Lo]); //build
+  Except
+    exeVersion := '';
+  end;
+  Result := exeVersion;
+end;
+
 procedure TfrmMt4OptimSetExtractor.SelectReport;
 begin
-  OpenDialog1.Filter := 'HTM (*.htm)|*.htm';
+  OpenDialog1.Filter := 'HTM (*.htm)|*.htm|TXT (*.txt)|*.txt';
   if OpenDialog1.Execute then
   begin
     if FileExists(OpenDialog1.FileName) then
@@ -124,8 +165,9 @@ end;
 
 procedure TfrmMt4OptimSetExtractor.StatusBarPanelsResize;
 begin
-  StatusBar1.Panels[0].Width := StatusBar1.Width div 2;
-  StatusBar1.Panels[1].Width := StatusBar1.Width div 2;
+  var i := StatusBar1.Width - StatusBar1.Panels[0].Width;
+  StatusBar1.Panels[1].Width := i div 5 * 3;
+  StatusBar1.Panels[2].Width := i div 5 * 2;
 end;
 
 end.

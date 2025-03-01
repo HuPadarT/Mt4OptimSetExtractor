@@ -18,7 +18,8 @@ type
     FSettings: string;
 
   public
-    procedure StringToOptimReport(const AText: string);
+    procedure TableRowToOptimReport(const AText: string);
+    procedure CsvToOptimReport(const AText: string);
     function GetFloatingFromStr(ATxt: string): double;
 
     property RowNumber: integer read FRowNumber;
@@ -38,7 +39,7 @@ uses
 
 { TOptimReport }
 
-procedure TOptimReport.StringToOptimReport(const AText: string);
+procedure TOptimReport.TableRowToOptimReport(const AText: string);
 const TitleEnd = '">';
 const DataSep = '</td><td class=mspt>';
 var
@@ -62,6 +63,32 @@ begin
     FExpectedResult := GetFloatingFromStr(Sl[4]);
     FDdInMoney := GetFloatingFromStr(Sl[5]);
     FDdInPercent := GetFloatingFromStr(Sl[6]);
+  finally
+    Sl.Free;
+  end;
+end;
+
+procedure TOptimReport.CsvToOptimReport(const AText: string);
+var
+  Temptxt: string;
+  Bg: integer;
+  Sl: TStringList;
+begin
+  Temptxt := AText.Replace(#9, ';', [rfReplaceAll]);
+  Bg := POS('%', AText) + 1;
+  FSettings := Temptxt.Substring(Bg, Length(Temptxt) - Bg);
+  Sl := TStringList.Create();
+  try
+    Sl.StrictDelimiter := true;
+    Sl.Delimiter := ';';
+    Sl.DelimitedText := Temptxt;
+    FRowNumber := StrToInt(Sl[0]);
+    FProfit := GetFloatingFromStr(Sl[1]);
+    FOrdersNo := StrToInt(Sl[2]);
+    FProfitFactor := GetFloatingFromStr(Sl[3]);
+    FExpectedResult := GetFloatingFromStr(Sl[4]);
+    FDdInMoney := GetFloatingFromStr(Sl[5]);
+    FDdInPercent := GetFloatingFromStr(Sl[6].Substring(0, Length(Sl[6])-1));
   finally
     Sl.Free;
   end;

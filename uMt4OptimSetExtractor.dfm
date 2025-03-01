@@ -3,7 +3,7 @@ object frmMt4OptimSetExtractor: TfrmMt4OptimSetExtractor
   Top = 0
   Caption = 'Mt4 optimization report Set Extractor'
   ClientHeight = 602
-  ClientWidth = 636
+  ClientWidth = 784
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -17,7 +17,7 @@ object frmMt4OptimSetExtractor: TfrmMt4OptimSetExtractor
   object DBGrid1: TDBGrid
     Left = 0
     Top = 0
-    Width = 636
+    Width = 784
     Height = 529
     Align = alTop
     Anchors = [akLeft, akTop, akRight, akBottom]
@@ -33,27 +33,32 @@ object frmMt4OptimSetExtractor: TfrmMt4OptimSetExtractor
   object StatusBar1: TStatusBar
     Left = 0
     Top = 575
-    Width = 636
+    Width = 784
     Height = 27
     Panels = <
       item
-        Width = 200
+        Width = 120
+      end
+      item
+        Width = 100
       end
       item
         Alignment = taRightJustify
-        Width = 50
+        Width = 100
       end>
+    ExplicitWidth = 800
   end
   object Panel1: TPanel
     Left = 0
     Top = 529
-    Width = 636
+    Width = 784
     Height = 40
     Align = alTop
     TabOrder = 2
-    ExplicitTop = 513
+    ExplicitTop = 527
+    ExplicitWidth = 636
     DesignSize = (
-      636
+      784
       40)
     object btnImport: TButton
       Left = 8
@@ -65,7 +70,7 @@ object frmMt4OptimSetExtractor: TfrmMt4OptimSetExtractor
       OnClick = btnImportClick
     end
     object btnSaveSet: TButton
-      Left = 469
+      Left = 617
       Top = 6
       Width = 159
       Height = 25
@@ -73,6 +78,7 @@ object frmMt4OptimSetExtractor: TfrmMt4OptimSetExtractor
       Caption = 'Save selected to Set file'
       TabOrder = 1
       OnClick = btnSaveSetClick
+      ExplicitLeft = 469
     end
   end
   object OpenDialog1: TOpenDialog
